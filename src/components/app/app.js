@@ -1,63 +1,35 @@
-import { useState, useEffect} from 'react';
-import {Container} from 'react-bootstrap';
+import { useState } from 'react';
 import './app.css';
+import Form from './Form';
+import dataContext from './context';
 
-function useInputWithValidate(initialValue) {
-    const [value, setValue] = useState(initialValue);
-
-    const onChange = event => {
-        setValue(event.target.value)
-    }
-    const validateInput = () => {
-        return value.search(/\d/) >= 0
-    }
-
-    return {value: value, 
-            onChange: onChange,
-            validateInput: validateInput}
-}
-
-const Form = () => {
-
-    const input = useInputWithValidate('');
-    const textArea = useInputWithValidate('');
+const { Provider } = dataContext;
 
 
-
-    const color = input.validateInput() ? 'text-danger' : null;
-
-    return (
-        <Container>
-            <form className="w-50 border mt-5 p-3 m-auto">
-                <div className="mb-3">
-                    <input value={`${input.value} / ${textArea.value}`} type="text" className="form-control" readOnly/>
-                    <label htmlFor="exampleFormControlInput1" className="form-label mt-3">Email address</label>
-                    <input 
-                    onChange={input.onChange} 
-                    type="email" 
-                    className={`form-control ${color}`} 
-                    id="exampleFormControlInput1" 
-                    placeholder="name@example.com"
-                    value={input.value}
-                    />
-                    </div>
-                    <div className="mb-3">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Example textarea</label>
-                    <textarea 
-                    className="form-control" 
-                    id="exampleFormControlTextarea1" 
-                    rows="3"
-                    onChange={textArea.onChange}
-                    value={textArea.value}></textarea>
-                </div>
-            </form>
-        </Container>
-    )
-}
 
 function App() {
+    const [data, setData] = useState({
+        mail: "name@example.com",
+        text: 'some text',
+        forceChangeMail: forceChangeMail
+    });
+
+    function forceChangeMail() {
+        setData({ ...data, mail: 'text@gmail.com' })
+    }
+
     return (
-        <Form/>
+        <Provider value={data}>
+            <Form text={data.text} />
+            <button
+                onClick={() => setData({
+                    ...data,
+                    mail: "second@example.com",
+                    text: 'another text'
+                })}>
+                Click me
+            </button>
+        </Provider>
     );
 }
 
